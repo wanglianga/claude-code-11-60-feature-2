@@ -2,6 +2,7 @@
 
 import Dexie, { type Table } from 'dexie';
 import type { BatchMeta, RuleSet, Plan, Run, Report, Manifest, TableRows } from '../domain/types';
+import type { ConditionalReport } from '../domain/conditional';
 
 export interface BatchRowsRow { key: string; tables: TableRows; }
 export interface RunOutputRow { runId: string; tables: TableRows; }
@@ -15,6 +16,7 @@ export class SynthDB extends Dexie {
   runs!: Table<Run, string>;
   runOutputs!: Table<RunOutputRow, string>;
   reports!: Table<Report, string>;
+  conditionalReports!: Table<ConditionalReport, string>;
   manifests!: Table<Manifest, string>;
   kv!: Table<KvRow, string>;
 
@@ -28,6 +30,19 @@ export class SynthDB extends Dexie {
       runs: 'id, seq, planId, status',
       runOutputs: 'runId',
       reports: 'id, runId',
+      manifests: 'id, runId',
+      kv: 'key'
+    });
+    // v2：新增条件化偏差分析报告表（只读派生结果，不改动既有表）
+    this.version(2).stores({
+      batches: 'key, batchId, revision',
+      batchRows: 'key',
+      ruleSets: 'id, status',
+      plans: 'id, status',
+      runs: 'id, seq, planId, status',
+      runOutputs: 'runId',
+      reports: 'id, runId',
+      conditionalReports: 'id, runId',
       manifests: 'id, runId',
       kv: 'key'
     });

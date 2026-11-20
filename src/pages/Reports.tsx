@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { startVerification } from '../services/verifyService';
@@ -38,7 +39,7 @@ export default function Reports() {
       <h1 className="page-title">质量核验</h1>
       <p className="page-sub">
         比较约定的总体统计、引用完整性、资源占用与时间可行性，并检查直接标识、源记录近乎复制与导出字段中的独特组合。
-        两条生成路线使用完全相同的核验。
+        两条生成路线使用完全相同的核验。总体统计接近不代表条件化指标无失真——需按严重度/资源类别/并发负荷交叉复核，见「<Link to="/conditional">条件化偏差</Link>」。
       </p>
 
       <div className="card">

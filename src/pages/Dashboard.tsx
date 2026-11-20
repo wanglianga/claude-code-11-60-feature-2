@@ -17,6 +17,7 @@ export default function Dashboard() {
     return runs[0];
   }, []);
   const lastReport = useLiveQuery(async () => (await db.reports.toArray()).pop(), []);
+  const lastConditional = useLiveQuery(async () => (await db.conditionalReports.toArray()).pop(), []);
 
   return (
     <div>
@@ -102,6 +103,19 @@ export default function Dashboard() {
             </dl>
           ) : <div className="muted">尚无核验报告</div>}
         </div>
+      </div>
+
+      <div className="card">
+        <h3>条件化偏差分析（{lastConditional ? lastConditional.overall : '尚未执行'}）</h3>
+        {lastConditional ? (
+          <dl className="kv">
+            <dt>报告</dt><dd><Link to="/conditional">{lastConditional.id}</Link>（{lastConditional.runId}）</dd>
+            <dt>可判定 / 稀疏 / 不可判定</dt>
+            <dd>{lastConditional.summary.okCells} / {lastConditional.summary.sparseCells} / {lastConditional.summary.indeterminateCells}</dd>
+            <dt>高负荷被压低</dt><dd>{lastConditional.summary.suppressedHighLoad.length} 项</dd>
+            <dt>高负荷不可判定</dt><dd>{lastConditional.summary.undecidableHighLoad.length} 项</dd>
+          </dl>
+        ) : <div className="muted">在「条件化偏差」对已完成运行执行分析：按严重度、资源类别、并发负荷交叉比较源样本与合成包的到场时长与未及时响应率。</div>}
       </div>
     </div>
   );
